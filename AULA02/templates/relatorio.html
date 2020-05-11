@@ -172,23 +172,26 @@
 			}
 		}
 	</style>
-
-
 </head>
 
 <body>
 
 	<div>
-
 		{% if username %}
 		Usuario: {{ username }}
 		{% endif %}
-
-
 	</div>
+	<br>
 
-
-	
+	<div>
+		<h2>Meus arquivos:</h2>
+		{% if onlyfiles %}
+		{% for item in onlyfiles %}
+		<p> id: {{ loop.index }} - file: {{ item }} <span class="glyphicon glyphicon-ok-sign"
+				style="color:rgb(15, 175, 15)"></span></p>
+		{% endfor %}
+		{% endif %}
+	</div>
 
 	<div class="footer">
 		<p>Flask adventures</p>
