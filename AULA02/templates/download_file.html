@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<title>Upload de arquivos</title>
+<title>Download de arquivos</title>
 
 <html>
 
@@ -209,23 +209,30 @@
 
 	</div>
 
+	<div>
+		<h2>Meus arquivos:</h2>
+		{% if onlyfiles %}
+		{% for item in onlyfiles %}
+		<p> id: {{ loop.index }} - file: {{ item }} <span class="glyphicon glyphicon-ok-sign"
+				style="color:rgb(15, 175, 15)"></span></p>
+		{% endfor %}
+		{% endif %}
+	</div>
+
 
 	<form method="post" action="/download" autocomplete="off">
+		<div class="col-md-4">
+			<div class="input-group">
+				<span class="input-group-addon"><i class="glyphicon glyphicon-list-alt"></i></span>
+				<input id="filename" type="text" class="form-control" name="filename" placeholder="Arquivo">
+			</div>
+		</div>
+		<br>
+		<p>
+			<input id="btnEnviar" type="submit" value="Download" onClick="enviarDocumentos()">
+		</p>
 
-       
-                <div class="col-md-4">
-                    <div class="input-group">
-                        <span class="input-group-addon"><i class="glyphicon glyphicon-user"></i></span>
-                        <input id="filename" type="text" class="form-control" name="filename" placeholder="Arquivo">
-                    </div>
-                </div>
-
-        <br>
-        <p>
-            <input id="btnEnviar" type="submit" value="Download" onClick="enviarDocumentos()">
-        </p>
-
-    </form>
+	</form>
 
 	<div class="footer">
 		<p>Flask adventures</p>
