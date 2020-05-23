@@ -14,13 +14,16 @@ import getpass
 import requests, bs4     # pip install beautifulsoup4 requests
 import mysql.connector    # pip install mysql-connector-python
 
-mypath = '/home/walter/Documentos/curso_flask_puc/AULA02/downloads'
+mypath = '/home/flaskman/Documentos/curso_flask_puc/AULA04/downloads'  # path de onde arquivo sera salvo
 username = getpass.getuser()
 
 app = Flask(__name__)
 
 @app.route("/", methods=['GET', 'POST'])
-def uploadFiles():    
+def uploadFiles():
+    '''
+    Descricao da classe: essa rota direciona a requisicao para uma pagina de upload de arquivos.
+    '''    
     if request.method == 'POST':
         if 'file' not in request.files:
             return render_template('upload_files.html', username=username)
@@ -33,8 +36,8 @@ def uploadFiles():
 
         
         onlyfiles = [f for f in listdir(mypath) if isfile(join(mypath, f))]
-        #threadObj = threading.Thread(target=calcula(username))
-        #threadObj.start()
+        threadObj = threading.Thread(target=calcula(username))
+        threadObj.start()
         #return redirect('/relatorio')
         return render_template('relatorio.html', onlyfiles=onlyfiles, username=username)
 
@@ -42,6 +45,9 @@ def uploadFiles():
 
 @app.route('/download', methods=['GET', 'POST'])
 def downloadFile ():
+    '''
+    Descricao da classe: essa rota direciona a requisicao para uma pagina de upload de arquivos.
+    '''
     if request.method == 'POST':
         filename = request.form['filename']
 
@@ -57,38 +63,42 @@ def downloadFile ():
 
 @app.route('/weather', methods=['GET', 'POST'])
 def climaTempo ():
+    '''
+    Descricao da classe: essa classe direciona a requisicao para recuperacao de dados do site Clima Tempo
+    para a cidade de Pocos de Caldas.
+    '''
     if request.method == 'GET':
 
         url = 'https://www.climatempo.com.br/previsao-do-tempo/cidade/182/pocosdecaldas-mg'
         page = requests.get(url)
         soup = bs4.BeautifulSoup(page.text, 'html.parser')
 
-        temp_min = soup.find(class_='min-temp')
+        temp_min = soup.find(id='min-temp-1')
         print("Temperatura minima: " + temp_min.contents[0])
 
-        temp_max = soup.find(class_='max-temp')
+        temp_max = soup.find(id='max-temp-1')
         print("Temperatura maxima: " + temp_max.contents[0])
 
-        text = soup.find(class_='-gray _flex _align-center').get_text()
-        text = re.sub("\n", "", text)
-        print("mm de chuva: " + text)
+        text = soup.find(class_='variables-list').get_text()
+        text = re.sub("\n", " ", text)
+        print(text)
 
-        text = soup.find_all(class_='list _margin-t-20')
+        var = text.split(" ")
+        print("lista suja: " + str(var))
 
-        var = text[0].get_text().split()
-        var2 = text[1].get_text().split()
-        var3 = text[2].get_text().split()
+        new_list = []
 
-        print(var[0] + " : " + var2[0] + " : " + var3[0] + var3[1])
-        print(var[1] + " : " + var2[1] + " : " + var3[2])
-        print(var[2] + " : " + var2[2] + " : " + var3[3])
-        print(var[3] + " : " + var2[3] + " : " + var3[4])
-        #return "tempo de quarentena..."
+        for item in var:
+            if item != "":
+                new_list.append(item)
         
-        primeiro_dado = str(var[0] + " : " + var2[0] + " : " + var3[0] + var3[1])
-        segundo_dado = str(var[1] + " : " + var2[1] + " : " + var3[2])
-        terceiro_dado = str(var[2] + " : " + var2[2] + " : " + var3[3])
-        quarto_dado = str(var[3] + " : " + var2[3] + " : " + var3[4])
+        print("nova lista: " + str(new_list))
+     
+        
+        primeiro_dado = str(new_list[0] + " - min: " + new_list[1] + " max: " + new_list[2])
+        segundo_dado = "2"#str(new_list[1] + " : " + new_list[1] + " : " + new_list[2])
+        terceiro_dado = "3"#str(new_list[2] + " : " + new_list[2] + " : " + new_list[3])
+        quarto_dado = "4"#str(new_list[3] + " : " + new_list[3] + " : " + new_list[4])
 
         json_object = json.loads('{ "primeiro_dado": "%s", \
                                     "segundo_dado": "%s", \
@@ -96,13 +106,17 @@ def climaTempo ():
                                     "quarto_dado": "%s"}' % (primeiro_dado, segundo_dado, terceiro_dado, quarto_dado ))
         json_formatted_str = json.dumps(json_object, indent=2)
         print(json_formatted_str)
-
+        
         return jsonify({"status": "ok", "method": "GET", "return": json_formatted_str}), 200
+        #return primeiro_dado
     return jsonify({"status": "ok", "method": "POST", "return": "metodo post"}), 200
 
 
 @app.route('/bd', methods=['GET', 'POST'])
 def bancoDados():
+    '''
+    Descricao da classe: essa rota direciona a requisicao para uma pagina de estudo de banco de dados.
+    '''
     mydb = mysql.connector.connect(
 	host="localhost",
 	user="root",
@@ -128,7 +142,7 @@ def bancoDados():
 @app.errorhandler(400)
 def bad_request(e):
     """
-    Desc: Metodo verificador de erro na requisicao.
+    Desc: Metodo verificador de erro na requisicao para request nao compreendida.
     """
     return jsonify({"status": "not ok", "message": "this server could not understand your request"}), 400
 
@@ -136,8 +150,7 @@ def bad_request(e):
 @app.errorhandler(404)
 def not_found(e):
     """
-    Desc: Metodo verificador de erro na requisicao.  
-    
+    Desc: Metodo verificador de erro na requisicao para rota nao encontrada.      
     """
     return jsonify({"status": "not found", "message": "route not found"}), 404
 
@@ -145,14 +158,15 @@ def not_found(e):
 @app.errorhandler(500)
 def not_found2(e):
     """
-    Desc: Metodo verificador de erro na requisicao.  
-    
+    Desc: Metodo verificador de erro na requisicao de erro de servidor.      
     """  
     return jsonify({"status": "internal error", "message": "internal error occurred in server"}), 500
 
 
-
-
-def calcula(username):    
-    pass
+def calcula(username): 
+    """
+    Desc: metodo exemplo de thread.
+    """   
+    print("executando uma thread...")
+    #pass
 
