@@ -138,22 +138,22 @@
 
     <div id="alerta">
         <div class="alert alert-info alert-dismissible">
-            <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>            
+            <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
             <strong>Atualizando dados...</strong>
         </div>
     </div>
 
-<br>
-    <div >
-                              
-            <strong>{% if msg %}
-                Warning: {{ msg }}
-                {% endif %}</strong>
-        
+    <br>
+    <div>
+
+        <strong>{% if msg %}
+            Warning: {{ msg }}
+            {% endif %}</strong>
+
     </div>
     <br>
 
-    
+
 
     <form method="post" action="/atualiza_cadastro" autocomplete="off">
 
