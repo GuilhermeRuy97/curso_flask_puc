@@ -9,10 +9,11 @@ import time
 import requests, bs4     # pip install beautifulsoup4 requests
 
 
-mypath = '/home/flaskman/Documentos/curso_flask_puc/AULA02/downloads'  # path de onde arquivo sera salvo
+mypath = '/home/walter/Documentos/curso_flask_puc/AULA02/downloads'  # path de onde arquivo sera salvo
 username = getpass.getuser()
 
 app = Flask(__name__)
+
 
 @app.route("/", methods=['GET', 'POST'])
 def uploadFiles():
@@ -98,8 +99,8 @@ def climaTempo ():
         json_formatted_str = json.dumps(json_object, indent=2)
         print(json_formatted_str)
         
-        return jsonify({"status": "ok", "method": "GET", "return": json_formatted_str}), 200
-        #return primeiro_dado
+        #return jsonify({"status": "ok", "method": "GET", "return": json_formatted_str}), 200
+        return primeiro_dado
     return jsonify({"status": "ok", "method": "POST", "return": "metodo post"}), 200
 
 
